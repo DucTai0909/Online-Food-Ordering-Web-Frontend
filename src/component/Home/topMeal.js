@@ -1,0 +1,26 @@
+export const topMeals = [
+    {
+        image:"https://cdn.pixabay.com/photo/2024/04/18/10/41/ai-generated-8704060_640.jpg",
+        title:"Pizza"
+    },
+    {
+        image:"https://seabreezevictoria.com/wp-content/uploads/2024/01/com-tam-suon-bi-cha-2.jpg",
+        title:"Cơm"
+    },
+    {
+        image:"https://dayconkieunhat.vn/wp-content/uploads/2017/06/chao-cua-bien-mon-ngon-giup-be-phat-trien-tri-nao.jpg",
+        title:"Cháo"
+    },
+    {
+        image:"https://cdn.pixabay.com/photo/2022/05/25/21/28/burger-7221436_640.jpg",
+        title:"Hamburger"
+    },
+    {
+        image:"https://cdn.pixabay.com/photo/2015/09/04/11/45/resort-921940_640.jpg",
+        title:"Mì"
+    },
+    {
+        image:"https://cdn.pixabay.com/photo/2015/03/11/00/31/chicken-667935_640.jpg",
+        title:"Gà"
+    }
+]
