@@ -37,7 +37,8 @@ export const LoginForm = () => {
                     label="password"
                     fullWidth
                     variant="outlined"
-                    margin="normal"        
+                    margin="normal"
+                    type="password"     
                 />
                 <Button sx={{mt:2, padding:"1rem"}} fullWidth type='submit' variant='contained'>Đăng nhập</Button>
             </Form>

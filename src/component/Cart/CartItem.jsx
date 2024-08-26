@@ -2,37 +2,60 @@ import { Chip, IconButton } from '@mui/material'
 import React from 'react'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { removeCartItem, updateCartItem } from '../State/Cart/Action';
 
-const CartItem = () => {
+const CartItem = ({item}) => {
+    const {auth} =useSelector(store=>store)
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
+    const jwt = localStorage.getItem("jwt")
+
+    const handleUpdateCartItem = (value) =>{
+        if(value == -1 && item.quantity ==1){
+            handleRemoveCartItem()
+        }
+        const data = {cartItemId:item.id, quantity:item.quantity + value}
+        dispatch(updateCartItem({data, jwt}))
+        // window.location.href = '/cart';
+        
+    }
+
+    const handleRemoveCartItem=()=>{
+        dispatch(removeCartItem({cartItemId:item.id, jwt:auth.jwt || jwt}))
+        // window.location.href = '/cart';
+    }
+
   return (
     <div className='px-5'>
         <div className='lg:flex items-center lg:space-x-5'>
             <div>
                 <img className='w-[5rem] h-[5rem] object-cover' 
-                    src="https://thehealthyhouse.vn/_next/image/?url=https%3A%2F%2Fapi.calories.vn%2Fuploads%2Fquan_com_tam_o_ha_noi_4bc3baefa9.jpg&w=828&q=75" alt="" />
+                    src={item.food.images[0]} alt="" />
             </div>
             <div className='flex items-center justify-between lg:w-[70%]'>
                 <div className='space-y-1 lg:space-y-3 w-full'>
-                    <p>Cơm tấm Sài Gòn</p>
+                    <p>{item.food.name}</p>
                     <div className='flex justify-between items-center'>
                         <div className='flex items-center space-x-1'>
-                            <IconButton>
+                            <IconButton onClick={()=>handleUpdateCartItem(-1)}>
                                 <RemoveCircleOutlineIcon/>
                             </IconButton>
                             <div className='w-5 h-5 text-xs flex items-center justify-center'>
-                                {5}
+                                {item.quantity}
                             </div>
-                            <IconButton>
+                            <IconButton onClick={()=>handleUpdateCartItem(1)}>
                                 <AddCircleOutlineIcon/>
                             </IconButton>
                         </div>
                     </div>
                 </div>
-                <p>50.000 VND</p>
+                <p>{item.totalPrice.toLocaleString('vi-VN')} VND</p>
             </div>
         </div>
         <div className='pt-3 space-x-2'>
-            {[1,1,1,].map((item)=><Chip label={"Mon chinh"}/>)}
+            {item.ingredients.map((ingredient)=><Chip label={ingredient}/>)}
         </div>
     </div>
   )

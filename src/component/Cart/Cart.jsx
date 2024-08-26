@@ -1,10 +1,11 @@
 import { Box, Button, Card, Divider, Grid, Modal, TextField } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import CartItem from './CartItem'
 import AddressCard from './AddressCard'
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { createOrder } from '../State/Order/Action';
 
 export const style = {
     position: 'absolute',
@@ -31,16 +32,34 @@ const initialValues={
 //     city:Yup.string().required('Thành phố không được để trống'),
 // })
 
-const items =[1,1]
+// const items =[1,1]
 
 const Cart = () => {
     const createOrderUsingSelectedAddress =()=>{
 
     }
     const handleOpenAddressModal =()=>setOpen(true);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+
+    const {cart, auth} = useSelector(store=>store);
+    const dispatch = useDispatch();
+
     const handleClose = () => setOpen(false);
     const handleSubmit=(values)=>{
+        const data={
+            jwt:localStorage.getItem("jwt"),
+            order:{
+                restaurantId:cart.cartItems[0].food?.restaurant.id,
+                deliveryAddress:{
+                    fullName:auth.user?.fullName,
+                    streetAddress:values.streetAddress,
+                    ward:values.ward,
+                    district:values.district,
+                    city:"TP. Hồ Chí Minh",
+                }
+            }
+        }
+        dispatch(createOrder(data))
         console.log("form value", values);
     }
 
@@ -48,14 +67,14 @@ const Cart = () => {
     <>
         <main className='lg:flex justify-between'>
             <section className='lg:w-[30%] space-y-6 lg:min-h-screen pt-10'>
-                {items.map((item)=><CartItem/>)}
+                {cart.cartItems.map((item)=><CartItem item={item}/>)}
                 <Divider/>
                 <div className='billDetails px-5 text-sm'>
                     <p className='font-extralight py-5'>Chi tiết hóa đơn</p>
                     <div className='space-y-3'>
                         <div className='flex justify-between text-gray-400'>
                             <p>Giá trị đơn hàng</p>
-                            <p>50.000 VND</p>
+                            <p>{cart.cart?.total.toLocaleString('vi-VN')} VND</p>
                         </div>
                         <div className='flex justify-between text-gray-400'>
                             <p>Phí giao hàng</p>
@@ -69,7 +88,7 @@ const Cart = () => {
                     </div>
                     <div className='flex justify-between text-gray-400'>
                         <p>Thành tiền</p>
-                        <p>65.000 VND</p>
+                        <p>{(cart.cart?.total + 10000 + 15000).toLocaleString('vi-VN')} VND</p>
                     </div>
                 </div>  
             </section>

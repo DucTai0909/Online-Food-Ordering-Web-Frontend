@@ -1,7 +1,10 @@
 import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControlLabel, FormGroup } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import React from 'react'
+import React, { useState } from 'react'
 import { Category } from '@mui/icons-material';
+import { categorizeIngredients } from '../util/CategorizeIngredients';
+import { useDispatch } from 'react-redux';
+import { addItemToCart } from '../State/Cart/Action';
 
 // const ingredients =[
 //     {
@@ -56,10 +59,35 @@ const demo =[
 
 ]
 
-const MenuCard = () => {
-    const handleCheckBoxChange=(value)=>{
-        console.log(value);
+const MenuCard = ({item}) => {
+    const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const dispatch = useDispatch();
+
+    const handleCheckBoxChange=(itemName)=>{
+        console.log(itemName);
+        if(selectedIngredients.includes(itemName)){
+            setSelectedIngredients(selectedIngredients.filter((item)=>item!==itemName));
+        }else{
+            setSelectedIngredients([...selectedIngredients, itemName]);
+        }
     }
+
+    const handleAddItemToCart=(e)=>{
+        e.preventDefault();
+        const reqData ={
+            token:localStorage.getItem("jwt"),
+            cartItem:{
+                foodId:item.id,
+                quantity:1,
+                ingredients: selectedIngredients,
+            },
+        };
+        dispatch(addItemToCart(reqData))
+        console.log("req Data", reqData); 
+    };
+
+    
+
   return (
     <Accordion>
         <AccordionSummary
@@ -70,27 +98,34 @@ const MenuCard = () => {
           <div className='lg:flex items-center justify-between'>
             <div className='lg:flex items-center lg:gap-5'>
                 <img className='w-[7rem] h-[7rem] object-cover'
-                src="https://thehealthyhouse.vn/_next/image/?url=https%3A%2F%2Fapi.calories.vn%2Fuploads%2Fquan_com_tam_o_ha_noi_4bc3baefa9.jpg&w=828&q=75" alt="" 
+                src={item.images[0]} alt="" 
                 />
                 <div className='space-y-1 lg:space-y-5 lg:max-w-2xl'>
-                    <p className='font-semibold text-xl'>Cơm tấm Sài Gòn</p>
-                    <p>50.000 VND</p>
-                    <p className='text-gray-400'>nice food</p>
+                    <p className='font-semibold text-xl'>{item.name}</p>
+                    <p>{item.price.toLocaleString('vi-VN')} VND</p>
+                    <p className='text-gray-400'>{item.description}</p>
                 </div>
             </div>
           </div>
         </AccordionSummary>
         <AccordionDetails>
-          <form >
+          <form onSubmit={handleAddItemToCart}>
             <div className='flex gap-5 flex-wrap'>
                 {
-                    demo.map((item)=>
+                    Object.keys(categorizeIngredients(item.ingredients)).map((category)=>
                     <div>
                         <p>{ item.category }</p>
                         <FormGroup>
                             {
-                                item.ingredients.map((item)=>
-                                <FormControlLabel control={<Checkbox onChange={()=>handleCheckBoxChange(item)}/>} label={item} />
+                                categorizeIngredients(item.ingredients)[category].map((item)=>
+                                <FormControlLabel 
+                                    key={item.id} 
+                                    control={
+                                    <Checkbox 
+                                        onChange={()=>handleCheckBoxChange(item.name)}
+                                    />
+                                } 
+                                label={item.name} />
                                 )
                             }
                         </FormGroup> 
@@ -99,7 +134,7 @@ const MenuCard = () => {
                 }
             </div>
             <div className='pt-5'>
-                <Button 
+                <Button
                     variant="contained" 
                     disabled ={false} 
                     type="submit">{ true?"Thêm vào giỏ hàng" : "Hết hàng" }
