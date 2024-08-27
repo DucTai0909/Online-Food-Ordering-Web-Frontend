@@ -1,5 +1,5 @@
 import { AddPhotoAlternate, Email } from '@mui/icons-material'
-import { Button, CircularProgress, Grid, IconButton, TextField } from '@mui/material'
+import { Box, Button, Chip, CircularProgress, FormControl, Grid, IconButton, InputLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material'
 import { useFormik } from 'formik'
 import React, { useState } from 'react'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -9,43 +9,24 @@ import { UploadImageToCloudinary } from '../util/UploadToCloudinary';
 const initialValues = {
   name: '',
   description: '',
-  cuisineType: '',
-  streetAddress: '',
-  ward: '',
-  district: '',
-  city: '',
-  email: '',
-  mobile: '',
-  twitter: "",
-  instagram: "",
-  openHours: "Thứ hai - Chủ nhật: 8:00 - 22:00",
+  price: '',
+  category: '',
+  restaurantId: '',
+  vegetarian: true,
+  seasonal: false,
+  ingredients:[],
   images: []
 }
-const CreateRestaurantForm = () => {
+
+
+
+const CreateMenuForm = () => {
   const [uploadImage, setUploadImage] = useState(false)
   const formik = useFormik({
     initialValues,
     onSubmit: (values) => {
-      const data={
-        name:values.name,
-        description:values.description,
-        cuisineType:values.cuisineType,
-        address:{
-          streetAddress:values.streetAddress,
-          ward:values.ward,
-          district:values.district,
-          city:values.city
-        },
-        contactInfomation:{
-          email:values.email,
-          mobile:values.mobile,
-          facebook:values.facebook,
-          instagram:values.instagram,
-        },
-        openHours:values.openHours,
-        images:values.images
-      }
-      console.log("data -----", data)
+      values.restaurantId = 9
+      console.log("data -----", values)
     }
   })
   const handleImageChange = async(e) => {
@@ -137,38 +118,58 @@ const CreateRestaurantForm = () => {
             </Grid>
             <Grid item xs={12} lg={6}>
               <TextField fullWidth
-                id='cuisineType'
-                name='cuisineType'
-                label="Kiểu ẩm thực"
+                id='price'
+                name='price'
+                label="Giá"
                 variant='outlined'
                 onChange={formik.handleChange}
-                value={formik.values.cuisineType}>
+                value={formik.values.price}>
 
               </TextField>
             </Grid>
 
             <Grid item xs={12} lg={6}>
               <TextField fullWidth
-                id='openHours'
-                name='openHours'
-                label="Giờ mở cửa"
+                id='category'
+                name='category'
+                label="Danh mục"
                 variant='outlined'
                 onChange={formik.handleChange}
-                value={formik.values.openHours}>
+                value={formik.values.category}>
 
               </TextField>
             </Grid>
 
             <Grid item xs={12}>
-              <TextField fullWidth
-                id='streetAddress'
-                name='streetAddress'
-                label="Địa chỉ"
-                variant='outlined'
-                onChange={formik.handleChange}
-                value={formik.values.streetAddress}>
-
-              </TextField>
+            <FormControl sx={{ m: 1, width: 300 }}>
+        <InputLabel id="demo-multiple-chip-label">Thành phần</InputLabel>
+        <Select
+          labelId="demo-multiple-chip-label"
+          id="demo-multiple-chip"
+          multiple
+          value={formik.values.ingredients}
+          onChange={formik.handleChange}
+          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+          renderValue={(selected) => (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+              {selected.map((value) => (
+                <Chip key={value} label={value} />
+              ))}
+            </Box>
+          )}
+        //   MenuProps={MenuProps}
+        >
+          {[1,1,1].map((name,index) => (
+            <MenuItem
+              key={name}
+              value={name}
+              
+            >
+              {index}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
             </Grid>
             <Grid item xs={12} lg={4}>
               <TextField fullWidth
@@ -262,4 +263,4 @@ const CreateRestaurantForm = () => {
   )
 }
 
-export default CreateRestaurantForm
+export default CreateMenuForm
